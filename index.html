@@ -31,7 +31,10 @@
   
   --theme-pqcra: #E53935;     /* 先鋒 PQCRA: 熱情紅 */
   --theme-pqcra-light: #FFEBEE;
-  
+
+  --theme-prep: #00796B;      /* 資料冊準備: 質感深青 */
+  --theme-prep-light: #E0F2F1;  
+
   --theme-reward: #E91E63;    /* 獎勵: 亮麗粉 */
   --theme-reward-light: #FCE4EC;
 }
@@ -54,6 +57,7 @@ body{font-family:var(--font-sans); background-color: #F8F9FA; color: var(--color
 .tab-btn[onclick*="tcia"].active { border-bottom-color: var(--theme-tcia); color: var(--theme-tcia); }
 .tab-btn[onclick*="thqa"].active { border-bottom-color: var(--theme-thqa); color: var(--theme-thqa); }
 .tab-btn[onclick*="this"].active { border-bottom-color: var(--theme-this); color: var(--theme-this); }
+.tab-btn[onclick*="prep"].active { border-bottom-color: var(--theme-prep); color: var(--theme-prep); }
 .tab-btn[onclick*="reward"].active { border-bottom-color: var(--theme-reward); color: var(--theme-reward); }
 
 /* 面板設定與主題色繼承 */
@@ -64,6 +68,7 @@ body{font-family:var(--font-sans); background-color: #F8F9FA; color: var(--color
 #panel-tcia { --current-theme: var(--theme-tcia); --current-light: var(--theme-tcia-light); }
 #panel-thqa { --current-theme: var(--theme-thqa); --current-light: var(--theme-thqa-light); }
 #panel-this { --current-theme: var(--theme-this); --current-light: var(--theme-this-light); }
+#panel-prep { --current-theme: var(--theme-prep); --current-light: var(--theme-prep-light); }
 #panel-reward { --current-theme: var(--theme-reward); --current-light: var(--theme-reward-light); }
 
 @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
@@ -145,12 +150,13 @@ body{font-family:var(--font-sans); background-color: #F8F9FA; color: var(--color
   <button class="tab-btn" onclick="switchTab('tcia')">中衛 TCIA</button>
   <button class="tab-btn" onclick="switchTab('thqa')">醫療品質協會</button>
   <button class="tab-btn" onclick="switchTab('this')">醫務管理學會</button>
+  <button class="tab-btn" onclick="switchTab('prep')">資料冊準備</button>
   <button class="tab-btn" onclick="switchTab('reward')">獎勵制度</button>
 </div>
 
 <div class="panel active" id="panel-overview">
   <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px">
-    <div class="section-title" style="margin-bottom:0">2026年預計參賽團隊</div>
+    <div class="section-title" style="margin-bottom:0">2026年參賽團隊</div>
   </div>
   
 <div class="grid2" style="margin-bottom:1.5rem">
@@ -513,9 +519,7 @@ body{font-family:var(--font-sans); background-color: #F8F9FA; color: var(--color
     <div class="card">
       <p style="font-size:15px;font-weight:600;color:var(--color-text-primary);margin-bottom:12px">特別獎說明</p>
       <div class="detail-box" style="margin-top:0"><ul>
-        <li>創意獎、幸福職場獎：於面談/實地審查時評分，平均達4分以上</li>
-        <li>人因特別獎：申請單檢附於成果報告書中，結合Human Factors理念</li>
-        <li>ESG特別獎：申請單檢附於成果報告書中，呼應永續環保責任</li>
+        <li>創意獎：本獎項獨立評比，不列入總分計算，為鼓勵醫療機構之創意思考，凡管理、資訊應⽤、技術、流程、物品及改善成果具創意特色，或與⺠眾相關之創意作法（如經由⺠眾或病⼈想法⽽產生的創意對策、以病⼈為中⼼思考產生之具體落實做法…等），皆可納入鼓勵範圍。</li>
       </ul></div>
     </div>
   </div>
@@ -539,11 +543,11 @@ body{font-family:var(--font-sans); background-color: #F8F9FA; color: var(--color
         <div style="font-size:14px;font-weight:600;color:var(--color-text-primary)">報名文件與書面繳交</div>
       </div>
       <div style="border-left: 3px solid var(--current-light); padding-left: 10px;">
-        <div style="font-size:12px;font-weight:600;color:var(--color-text-secondary);margin-bottom:2px">6月</div>
+        <div style="font-size:12px;font-weight:600;color:var(--color-text-secondary);margin-bottom:2px">6/8-6/12(高雄)</div>
         <div style="font-size:14px;font-weight:600;color:var(--color-text-primary)">區會選拔(書面+發表)</div>
       </div>
       <div style="border-left: 3px solid var(--current-light); padding-left: 10px;">
-        <div style="font-size:12px;font-weight:600;color:var(--color-text-secondary);margin-bottom:2px">7月 - 10月</div>
+        <div style="font-size:12px;font-weight:600;color:var(--color-text-secondary);margin-bottom:2px">7月-9月</div>
         <div style="font-size:14px;font-weight:600;color:var(--color-text-primary)">晉級公告與現場審查</div>
       </div>
       <div style="border-left: 3px solid var(--current-light); padding-left: 10px;">
@@ -825,6 +829,220 @@ body{font-family:var(--font-sans); background-color: #F8F9FA; color: var(--color
   </div>
 </div>
 
+<div class="panel" id="panel-prep">
+  <div class="section-title">面談/實地審查－書面資料冊準備重點</div>
+  <div class="tip" style="margin-bottom:1.5rem">
+    <p>💡 準備原則：各類文件應分門別類以文件夾成冊，並加上側邊條方便委員尋找；以下為建議分類，團隊可依實際需求自行調整。</p>
+  </div>
+
+  <style>
+    #panel-prep .prep-table-card{
+      padding:0;
+      overflow:hidden;
+      border:1px solid rgba(0,121,107,.45);
+      box-shadow:0 6px 18px rgba(0,121,107,.10);
+      background:#fff;
+      margin-bottom:1.5rem;
+    }
+    #panel-prep .prep-head{
+      display:grid;
+      grid-template-columns:36% 64%;
+      align-items:center;
+      background:linear-gradient(90deg, var(--current-theme), #009688);
+      color:#fff;
+      font-weight:700;
+      letter-spacing:.5px;
+    }
+    #panel-prep .prep-head > div{padding:12px 14px;}
+    #panel-prep .prep-head > div:first-child{border-right:1px solid rgba(255,255,255,.42);}
+    #panel-prep .prep-head-note{
+      display:inline-block;
+      background:rgba(255,255,255,.18);
+      color:#fff;
+      padding:4px 12px;
+      border-radius:999px;
+      margin-left:12px;
+      font-size:13px;
+      font-weight:600;
+      vertical-align:1px;
+    }
+    #panel-prep .prep-table{display:flex; flex-direction:column; background:#fff;}
+    #panel-prep .prep-row{
+      display:grid;
+      grid-template-columns:36% 64%;
+      border-top:1px solid rgba(0,121,107,.22);
+    }
+    #panel-prep .prep-cat{
+      padding:12px 14px;
+      border-right:1px solid rgba(0,121,107,.22);
+      background:linear-gradient(90deg, var(--current-light), rgba(224,242,241,.35));
+      display:flex;
+      align-items:flex-start;
+      gap:10px;
+    }
+    #panel-prep .prep-no{
+      min-width:28px;
+      height:28px;
+      border-radius:50%;
+      background:var(--current-theme);
+      color:#fff;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      font-size:14px;
+      font-weight:700;
+      line-height:1;
+      margin-top:1px;
+      box-shadow:0 2px 5px rgba(0,121,107,.22);
+    }
+    #panel-prep .prep-cat-title{
+      font-size:15px;
+      font-weight:800;
+      color:#00574F;
+      line-height:1.35;
+      margin-bottom:4px;
+    }
+    #panel-prep .prep-cat-desc{
+      font-size:12.5px;
+      color:#32776F;
+      line-height:1.45;
+      font-weight:600;
+    }
+    #panel-prep .prep-content{
+      padding:10px 18px;
+      font-size:14px;
+      line-height:1.65;
+      color:var(--color-text-primary);
+    }
+    #panel-prep .prep-content ul{margin:0; padding-left:18px;}
+    #panel-prep .prep-content li{margin:1px 0;}
+    #panel-prep .prep-hi{color:#00796B; font-weight:800;}
+
+    /* 下方補充區塊：獨立卡片，圖片格式比照前方「面談重點」區塊 */
+    #panel-prep .prep-extra-wrap{
+      display:flex;
+      flex-direction:column;
+      gap:16px;
+      margin-top:.25rem;
+    }
+    #panel-prep .prep-extra-card{
+      padding:1rem;
+      border:1px solid var(--color-border-tertiary);
+      box-shadow:0 2px 4px rgba(0,0,0,0.02);
+      background:#fff;
+    }
+    #panel-prep .prep-extra-card:hover{
+      transform:translateY(-2px);
+      box-shadow:0 6px 12px rgba(0,0,0,0.08);
+    }
+    #panel-prep .prep-extra-title{
+      font-size:15px;
+      font-weight:600;
+      color:var(--color-text-primary);
+      margin-bottom:12px;
+      display:flex;
+      align-items:center;
+      gap:6px;
+    }
+    #panel-prep .prep-image-wrap{
+      display:flex;
+      flex-direction:column;
+      gap:16px;
+    }
+    #panel-prep .prep-image{
+      width:100%;
+      border-radius:8px;
+      border:1px solid var(--color-border-tertiary);
+      display:block;
+    }
+
+    @media (max-width:720px){
+      #panel-prep .prep-head,
+      #panel-prep .prep-row{grid-template-columns:1fr !important;}
+      #panel-prep .prep-head > div:first-child{border-right:none; border-bottom:1px solid rgba(255,255,255,.42);}
+      #panel-prep .prep-cat{border-right:none; border-bottom:1px solid rgba(0,121,107,.18);}
+      #panel-prep .prep-head-note{display:block; margin:8px 0 0 0; width:max-content; max-width:100%;}
+    }
+  </style>
+
+  <!-- 表格區塊：獨立一區 -->
+  <div class="card prep-table-card">
+    <div class="prep-head">
+      <div>建議類別 <span class="prep-head-note">可依團隊需求自行調整</span></div>
+      <div>準備重點 <span class="prep-head-note">分門別類成冊，側邊條方便查找</span></div>
+    </div>
+
+    <div class="prep-table">
+      <div class="prep-row">
+        <div class="prep-cat"><span class="prep-no">1</span><div><div class="prep-cat-title">上期活動成果</div><div class="prep-cat-desc">呈現前期改善延續與維持情形</div></div></div>
+        <div class="prep-content"><ul><li>上期活動主題、對策PDCA、改善成果及效果維持數據等</li></ul></div>
+      </div>
+
+      <div class="prep-row">
+        <div class="prep-cat"><span class="prep-no">2</span><div><div class="prep-cat-title">圈活動會議紀錄</div><div class="prep-cat-desc">佐證團隊運作、討論歷程與跨域合作</div></div></div>
+        <div class="prep-content"><ul><li><span class="prep-hi">本期圈會活動會議紀錄</span>－內附會議清單、會議紀錄、簽到單及照片等資料</li><li><span class="prep-hi">跨領域團隊會議紀錄</span>－配合活動之相關部門、病房、協調會或共識會等資料</li></ul></div>
+      </div>
+
+      <div class="prep-row">
+        <div class="prep-cat"><span class="prep-no">3</span><div><div class="prep-cat-title">文獻查證資料</div><div class="prep-cat-desc">支持問題背景、目標設定與對策依據</div></div></div>
+        <div class="prep-content"><ul><li>參考或查證之文獻資料影本、品管工具及手法講義等（<span class="prep-hi">若有手稿最佳</span>）</li></ul></div>
+      </div>
+
+      <div class="prep-row">
+        <div class="prep-cat"><span class="prep-no">4</span><div><div class="prep-cat-title">改善前數據蒐集</div><div class="prep-cat-desc">說明基準值來源，強化數據可信度</div></div></div>
+        <div class="prep-content"><ul><li>改善前數據<span class="prep-hi">分子／分母來源（資訊系統、報表）</span></li></ul></div>
+      </div>
+
+      <div class="prep-row">
+        <div class="prep-cat"><span class="prep-no">5</span><div><div class="prep-cat-title">各類表單紀錄</div><div class="prep-cat-desc">保存原始紀錄，避免只有彙整結果</div></div></div>
+        <div class="prep-content"><ul><li>圈員投票單、問卷調查、訪談紀錄、測驗、查檢表等各類表單</li><li><span class="prep-hi">各類表單應有原始文件</span>，非僅數字統計報表</li></ul></div>
+      </div>
+
+      <div class="prep-row">
+        <div class="prep-cat"><span class="prep-no">6</span><div><div class="prep-cat-title">對策實施與檢討</div><div class="prep-cat-desc">可依對策一、對策二……分冊管理</div></div></div>
+        <div class="prep-content"><ul><li>對策內容可合併為一冊，也可整理成一項對策一冊</li><li>各對策內容或實施過程所延伸之<span class="prep-hi">衛教工具、道具、訓練教材、圖卡、查檢表單、輔具器材、資訊系統</span>等</li><li>改善活動期間所產生的<span class="prep-hi">公文、簽呈、電腦申請單</span>等</li></ul></div>
+      </div>
+
+      <div class="prep-row">
+        <div class="prep-cat"><span class="prep-no">7</span><div><div class="prep-cat-title">效果確認及效果維持</div><div class="prep-cat-desc">連結改善後成果、維持數據與偏差分析</div></div></div>
+        <div class="prep-content"><ul><li>改善後主指標、延伸性效益之數據分子／分母來源（資訊系統、報表）</li><li>效果維持數據（若有<span class="prep-hi">超出目標值之情形應備有分析資料</span>）</li></ul></div>
+      </div>
+
+      <div class="prep-row">
+        <div class="prep-cat"><span class="prep-no">8</span><div><div class="prep-cat-title">作業標準書</div><div class="prep-cat-desc">呈現標準化、知識管理與稽核機制</div></div></div>
+        <div class="prep-content"><ul><li>本期改善活動主題相關及報告書內提到之<span class="prep-hi">作業標準書、手冊或指引</span>等</li><li>具<span class="prep-hi">知識管理、文化（內化）管理、內部稽核</span>等機制</li></ul></div>
+      </div>
+
+      <div class="prep-row">
+        <div class="prep-cat"><span class="prep-no">9</span><div><div class="prep-cat-title">水平展開（內推／外展）</div><div class="prep-cat-desc">說明擴散應用、學習案例或專利推廣</div></div></div>
+        <div class="prep-content"><ul><li>製成學習案例或專利，於<span class="prep-hi">院內其他單位、同體系機構單位、院外機構進行推廣</span></li></ul></div>
+      </div>
+
+      <div class="prep-row">
+        <div class="prep-cat"><span class="prep-no">10</span><div><div class="prep-cat-title">其他相關資料</div><div class="prep-cat-desc">收納無法歸類但可補強佐證之資料</div></div></div>
+        <div class="prep-content"><ul><li>品管圈活動期間的手稿、其他參考資料或非上述分類之補充文件</li></ul></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 下方補充區塊：與表格分開，圖片格式比照前方「面談重點」區塊 -->
+  <div class="prep-extra-wrap">
+    <div class="card prep-extra-card">
+      <p class="prep-extra-title">書面資料冊範例</p>
+      <div class="prep-image-wrap">
+        <img src="https://yutien0627.github.io/quality_competition/附件圖片/書面資料冊範例.png" alt="書面資料冊範例" class="prep-image">
+      </div>
+    </div>
+
+    <div class="card prep-extra-card">
+      <p class="prep-extra-title">書面資料冊準備建議</p>
+      <div class="prep-image-wrap">
+        <img src="https://yutien0627.github.io/quality_competition/附件圖片/書面資料冊準備建議.png" alt="書面資料冊準備建議" class="prep-image">
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="panel" id="panel-reward">
   <div class="section-title"><i class="ti ti-building-hospital" aria-hidden="true"></i>院內品質提升活動獎勵</div>
   <div class="grid3" style="margin-bottom:1rem">
@@ -844,7 +1062,7 @@ body{font-family:var(--font-sans); background-color: #F8F9FA; color: var(--color
     </div>
     <div class="card">
       <p style="font-size:13px;font-weight:600;color:var(--color-text-secondary);margin-bottom:12px">主治醫師科部外績效</p>
-      <div class="award-row"><span style="font-size:14px;color:var(--color-text-primary)">品管中心認可活動</span><span style="font-size:14px;font-weight:600;color:var(--theme-this)">10分</span></div>
+      <div class="award-row"><span style="font-size:14px;color:var(--color-text-primary)">品管部認可活動</span><span style="font-size:14px;font-weight:600;color:var(--theme-this)">10分</span></div>
       <div class="award-row"><span style="font-size:14px;color:var(--color-text-primary)">獲院內獎項</span><span style="font-size:14px;font-weight:600;color:var(--theme-this)">20分</span></div>
       <div class="award-row"><span style="font-size:14px;color:var(--color-text-primary)">獲院外獎項</span><span style="font-size:14px;font-weight:600;color:var(--theme-this)">30分</span></div>
       <div class="award-row"><span style="font-size:14px;color:var(--color-text-primary)">獲金牌或等同獎項</span><span style="font-size:14px;font-weight:600;color:var(--theme-this)">40分</span></div>
