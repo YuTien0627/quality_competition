@@ -1,0 +1,909 @@
+<style>
+:root {
+  /* 基礎色彩與設定 */
+  --font-sans: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif, 'Noto Sans TC';
+  --color-text-primary: #202124;
+  --color-text-secondary: #5F6368;
+  --color-text-tertiary: #80868B;
+  --color-background-primary: #FFFFFF;
+  --color-background-secondary: #F8F9FA;
+  --color-background-tertiary: #E8EAED;
+  --color-border-secondary: #DADCE0;
+  --color-border-tertiary: #F1F3F4;
+  --border-radius-md: 8px;
+  --border-radius-lg: 16px;
+  
+  /* 各競賽主題色 */
+  --theme-overview: #5F6368;
+  --theme-overview-light: #F1F3F4;
+  
+  --theme-nhqa: #1A73E8;      /* 醫策會: 專業藍 */
+  --theme-nhqa-light: #E8F0FE;
+  
+  --theme-tcia: #0F9D58;      /* 中衛: 活力綠 */
+  --theme-tcia-light: #E6F4EA;
+  
+  --theme-thqa: #FF9800;      /* 醫療品質協會: 溫暖橘 */
+  --theme-thqa-light: #FFF3E0;
+  
+  --theme-this: #9C27B0;      /* 醫務管理學會: 質感紫 */
+  --theme-this-light: #F3E5F5;
+  
+  --theme-pqcra: #E53935;     /* 先鋒 PQCRA: 熱情紅 */
+  --theme-pqcra-light: #FFEBEE;
+  
+  --theme-reward: #E91E63;    /* 獎勵: 亮麗粉 */
+  --theme-reward-light: #FCE4EC;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans); background-color: #F8F9FA; color: var(--color-text-primary);}
+.container{padding:2rem 1rem; max-width: 900px; margin: 0 auto;}
+.header{margin-bottom:2rem; text-align: center;}
+.header h1{font-size:24px;font-weight:600;color:var(--color-text-primary);margin-bottom:8px}
+.header p{font-size:15px;color:var(--color-text-secondary)}
+
+/* 主選單 Tabs */
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:2rem;border-bottom:2px solid var(--color-border-tertiary);padding-bottom:0; justify-content: center;}
+.tab-btn{padding:10px 18px;font-size:14px;font-weight:600;border:2px solid transparent;border-radius:var(--border-radius-md) var(--border-radius-md) 0 0;cursor:pointer;background:transparent;color:var(--color-text-secondary);transition:all 0.2s ease;white-space:nowrap;margin-bottom:-2px}
+.tab-btn:hover{color:var(--color-text-primary); background: var(--color-border-tertiary);}
+
+/* 各競賽 Tab 專屬 Active 顏色 */
+.tab-btn[onclick*="overview"].active { border-bottom-color: var(--theme-overview); color: var(--theme-overview); }
+.tab-btn[onclick*="nhqa"].active { border-bottom-color: var(--theme-nhqa); color: var(--theme-nhqa); }
+.tab-btn[onclick*="tcia"].active { border-bottom-color: var(--theme-tcia); color: var(--theme-tcia); }
+.tab-btn[onclick*="thqa"].active { border-bottom-color: var(--theme-thqa); color: var(--theme-thqa); }
+.tab-btn[onclick*="this"].active { border-bottom-color: var(--theme-this); color: var(--theme-this); }
+.tab-btn[onclick*="reward"].active { border-bottom-color: var(--theme-reward); color: var(--theme-reward); }
+
+/* 面板設定與主題色繼承 */
+.panel{display:none; animation: fadeIn 0.3s ease;}
+.panel.active{display:block}
+#panel-overview { --current-theme: var(--theme-overview); --current-light: var(--theme-overview-light); }
+#panel-nhqa { --current-theme: var(--theme-nhqa); --current-light: var(--theme-nhqa-light); }
+#panel-tcia { --current-theme: var(--theme-tcia); --current-light: var(--theme-tcia-light); }
+#panel-thqa { --current-theme: var(--theme-thqa); --current-light: var(--theme-thqa-light); }
+#panel-this { --current-theme: var(--theme-this); --current-light: var(--theme-this-light); }
+#panel-reward { --current-theme: var(--theme-reward); --current-light: var(--theme-reward-light); }
+
+@keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+.section-title{font-size:16px;font-weight:600;color:var(--color-text-primary);margin:1.5rem 0 1rem;display:flex;align-items:center;gap:8px; border-left: 4px solid var(--current-theme, var(--theme-overview)); padding-left: 8px;}
+.section-title i{font-size:20px;color:var(--current-theme, var(--theme-overview))}
+
+/* 卡片設計 - 加入陰影與懸停特效 */
+.card{background:var(--color-background-primary);border:1px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1.25rem;margin-bottom:1rem; box-shadow: 0 2px 4px rgba(0,0,0,0.02); transition: transform 0.2s ease, box-shadow 0.2s ease;}
+.card:hover{transform: translateY(-2px); box-shadow: 0 6px 12px rgba(0,0,0,0.08);}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+
+/* 通用標籤 */
+.badge{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:600;padding:4px 10px;border-radius:20px;}
+.badge-theme { background: var(--current-light); color: var(--current-theme); }
+
+/* 總覽專用的特定顏色標籤 */
+.badge-blue{background:var(--theme-nhqa-light);color:var(--theme-nhqa)}
+.badge-teal{background:var(--theme-tcia-light);color:var(--theme-tcia)}
+.badge-amber{background:var(--theme-thqa-light);color:var(--theme-thqa)}
+.badge-purple{background:var(--theme-this-light);color:var(--theme-this)}
+.badge-red{background:var(--theme-pqcra-light);color:var(--theme-pqcra)}
+
+/* 時間軸 */
+.timeline{position:relative;padding-left:24px}
+.timeline::before{content:'';position:absolute;left:8px;top:4px;bottom:4px;width:2px;background:var(--current-light)}
+.tl-item{position:relative;margin-bottom:1.25rem}
+.tl-dot{position:absolute;left:-22px;top:4px;width:12px;height:12px;border-radius:50%;border:2px solid var(--current-theme);background:var(--color-background-primary); box-shadow: 0 0 0 3px var(--current-light);}
+.tl-time{font-size:12px;font-weight:600;color:var(--current-theme);margin-bottom:4px}
+.tl-content{font-size:14px;color:var(--color-text-primary)}
+
+/* 評分進度條 */
+.score-row{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.score-label{font-size:13px;font-weight:500;color:var(--color-text-primary);flex:1}
+.score-bar-wrap{width:150px;height:10px;background:var(--color-background-tertiary);border-radius:5px;overflow:hidden}
+.score-bar{height:100%;border-radius:5px;transition:width 0.8s cubic-bezier(0.4, 0, 0.2, 1); background: var(--current-theme);}
+.score-pct{font-size:13px;font-weight:600;min-width:36px;text-align:right;color:var(--current-theme)}
+
+/* 細節區塊 */
+.detail-box{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:1rem;margin-top:10px; border: 1px solid var(--color-border-tertiary);}
+.detail-box ul{list-style:none;padding:0}
+.detail-box li{font-size:13px;color:var(--color-text-secondary);padding:4px 0;display:flex;align-items:flex-start;gap:8px; line-height:1.5}
+.detail-box li::before{content:'•';color:var(--current-theme);font-size:16px;line-height:1}
+
+/* 提示區塊 */
+.tip{background:var(--current-light);border-left:4px solid var(--current-theme);border-radius:0 var(--border-radius-md) var(--border-radius-md) 0;padding:1rem;margin-top:12px}
+.tip p{font-size:13px;color:var(--color-text-primary); font-weight:500; line-height: 1.5;}
+
+.award-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px dashed var(--color-border-tertiary)}
+.award-row:last-child{border-bottom:none}
+.award-name{font-size:14px;font-weight:500;color:var(--color-text-primary)}
+.award-amount{font-size:14px;font-weight:600;color:var(--current-theme)}
+
+/* 次選單 Sub-tabs */
+.sub-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1.25rem}
+.sub-btn{padding:6px 16px;font-size:13px;font-weight:500;border:1px solid var(--color-border-secondary);border-radius:20px;cursor:pointer;background:var(--color-background-primary);color:var(--color-text-secondary);transition:all 0.2s ease}
+.sub-btn:hover{border-color:var(--current-theme); color:var(--current-theme)}
+.sub-btn.active{background:var(--current-theme);color:#fff;border-color:var(--current-theme); box-shadow: 0 2px 6px rgba(0,0,0,0.15);}
+.sub-panel{display:none; animation: fadeIn 0.3s ease;}
+.sub-panel.active{display:block}
+
+@media (max-width: 600px) {
+  .grid2, .grid3 { grid-template-columns: 1fr; gap:12px; }
+  .score-bar-wrap { width: 100px; }
+}
+</style>
+
+<div class="container">
+<div class="header">
+  <h1><i class="ti ti-award" style="font-size:24px;vertical-align:-3px;margin-right:8px" aria-hidden="true"></i>2026 年院外品質競賽說明</h1>
+  <p>主題改善類 · 參賽團隊說明會資料整理</p>
+</div>
+
+<div class="tabs" id="mainTabs">
+  <button class="tab-btn active" onclick="switchTab('overview')">總覽</button>
+  <button class="tab-btn" onclick="switchTab('nhqa')">醫策會 NHQA</button>
+  <button class="tab-btn" onclick="switchTab('tcia')">中衛 TCIA</button>
+  <button class="tab-btn" onclick="switchTab('thqa')">醫療品質協會</button>
+  <button class="tab-btn" onclick="switchTab('this')">醫務管理學會</button>
+  <button class="tab-btn" onclick="switchTab('reward')">獎勵制度</button>
+</div>
+
+<div class="panel active" id="panel-overview">
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px">
+    <div class="section-title" style="margin-bottom:0">2026年預計參賽團隊</div>
+  </div>
+  
+  <div class="grid2" style="margin-bottom:1.5rem">
+    <div class="card" style="display:flex;flex-direction:column;gap:10px;height:100%">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div style="width:40px;height:40px;border-radius:10px;background:var(--theme-nhqa-light);display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="ti ti-heart-rate-monitor" style="font-size:20px;color:var(--theme-nhqa)" aria-hidden="true"></i></div>
+        <div><p style="font-size:15px;font-weight:600;color:var(--color-text-primary)">強心圈</p></div>
+      </div>
+      <p style="font-size:14px;color:var(--color-text-primary);font-weight:500;line-height:1.4">提升左心室正常收縮分率心臟衰竭 (HFpEF) 病人的整合性醫療照護品質</p>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:auto">
+        <span class="badge badge-blue">醫策會 NHQA</span>
+        <span class="badge badge-teal">中衛 TCIA</span>
+        <span class="badge badge-amber">醫品協會 THQA</span>
+        <span class="badge badge-purple">醫管學會 THIS</span>
+      </div>
+    </div>
+    
+    <div class="card" style="display:flex;flex-direction:column;gap:10px;height:100%">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div style="width:40px;height:40px;border-radius:10px;background:var(--theme-nhqa-light);display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="ti ti-droplet" style="font-size:20px;color:var(--theme-nhqa)" aria-hidden="true"></i></div>
+        <div><p style="font-size:15px;font-weight:600;color:var(--color-text-primary)">PBM小組</p></div>
+      </div>
+      <p style="font-size:14px;color:var(--color-text-primary);font-weight:500;line-height:1.4">使用者主導、資料驅動，以輕推策略，大幅降低冷凍沉澱品Cryo使用量</p>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:auto">
+        <span class="badge badge-blue">醫策會 NHQA</span>
+        <span class="badge badge-amber">醫品協會 THQA</span>
+        <span class="badge badge-purple">醫管學會 THIS</span>
+      </div>
+    </div>
+
+    <div class="card" style="display:flex;flex-direction:column;gap:10px;height:100%">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div style="width:40px;height:40px;border-radius:10px;background:var(--theme-thqa-light);display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="ti ti-mood-smile" style="font-size:20px;color:var(--theme-thqa)" aria-hidden="true"></i></div>
+        <div><p style="font-size:15px;font-weight:600;color:var(--color-text-primary)">ICG圈</p></div>
+      </div>
+      <p style="font-size:14px;color:var(--color-text-primary);font-weight:500;line-height:1.4">啟動護理韌性續航：提升外科病房護理師職場復原力</p>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:auto">
+        <span class="badge badge-red">先鋒 PQCRA</span>
+        <span class="badge badge-amber">醫品協會 THQA</span>
+        <span class="badge badge-purple">醫管學會 THIS</span>
+        <span class="badge badge-blue">醫策會 NHQA</span>
+      </div>
+    </div>
+
+    <div class="card" style="display:flex;flex-direction:column;gap:10px;height:100%">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div style="width:40px;height:40px;border-radius:10px;background:var(--theme-tcia-light);display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="ti ti-brain" style="font-size:20px;color:var(--theme-tcia)" aria-hidden="true"></i></div>
+        <div><p style="font-size:15px;font-weight:600;color:var(--color-text-primary)">救腦圈</p></div>
+      </div>
+      <p style="font-size:14px;color:var(--color-text-primary);font-weight:500;line-height:1.4">提升缺血性腦中風接受動脈取栓之病人 90天mRS ≤2分之比例</p>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:auto">
+        <span class="badge badge-amber">醫品協會 THQA</span>
+        <span class="badge badge-purple">醫管學會 THIS</span>
+        <span class="badge badge-blue">醫策會 NHQA</span>
+        <span class="badge badge-teal">中衛 TCIA</span>
+      </div>
+    </div>
+    
+    <div class="card" style="display:flex;flex-direction:column;gap:10px;height:100%">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div style="width:40px;height:40px;border-radius:10px;background:var(--theme-thqa-light);display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="ti ti-ambulance" style="font-size:20px;color:var(--theme-thqa)" aria-hidden="true"></i></div>
+        <div><p style="font-size:15px;font-weight:600;color:var(--color-text-primary)">急品圈安老組</p></div>
+      </div>
+      <p style="font-size:14px;color:var(--color-text-primary);font-weight:500;line-height:1.4">E化轉銜，無縫接軌-提升門診轉銜至居家醫療成功率</p>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:auto">
+        <span class="badge badge-amber">醫品協會 THQA</span>
+        <span class="badge badge-purple">醫管學會 THIS</span>
+      </div>
+    </div>
+    
+    <div class="card" style="display:flex;flex-direction:column;gap:10px;height:100%">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div style="width:40px;height:40px;border-radius:10px;background:var(--theme-pqcra-light);display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="ti ti-walk" style="font-size:20px;color:var(--theme-pqcra)" aria-hidden="true"></i></div>
+        <div><p style="font-size:15px;font-weight:600;color:var(--color-text-primary)">共好圈</p></div>
+      </div>
+      <p style="font-size:14px;color:var(--color-text-primary);font-weight:500;line-height:1.4">提升大腸直腸癌術後病人之早期下床活動比率</p>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:auto">
+        <span class="badge badge-red">先鋒 PQCRA</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title">四大競賽時程總覽</div>
+  <div class="card">
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px">
+      <div style="text-align:center;padding:8px;border-right:1px solid var(--color-border-tertiary)">
+        <div class="badge badge-blue" style="margin-bottom:12px;justify-content:center">醫策會 NHQA</div>
+        <p style="font-size:13px;color:var(--color-text-secondary)">書面截止</p>
+        <p style="font-size:16px;font-weight:600;color:var(--theme-nhqa);margin:6px 0">5月15日</p>
+        <p style="font-size:12px;color:var(--color-text-tertiary)">頒獎：12月至隔年1月</p>
+      </div>
+      <div style="text-align:center;padding:8px;border-right:1px solid var(--color-border-tertiary)">
+        <div class="badge badge-teal" style="margin-bottom:12px;justify-content:center">中衛 TCIA</div>
+        <p style="font-size:13px;color:var(--color-text-secondary)">書面截止</p>
+        <p style="font-size:16px;font-weight:600;color:var(--theme-tcia);margin:6px 0">5月16日</p>
+        <p style="font-size:12px;color:var(--color-text-tertiary)">頒獎：11月</p>
+      </div>
+      <div style="text-align:center;padding:8px;border-right:1px solid var(--color-border-tertiary)">
+        <div class="badge badge-amber" style="margin-bottom:12px;justify-content:center">醫療品質協會</div>
+        <p style="font-size:13px;color:var(--color-text-secondary)">書面截止</p>
+        <p style="font-size:16px;font-weight:600;color:var(--theme-thqa);margin:6px 0">9月底前</p>
+        <p style="font-size:12px;color:var(--color-text-tertiary)">頒獎：12月</p>
+      </div>
+      <div style="text-align:center;padding:8px">
+        <div class="badge badge-purple" style="margin-bottom:12px;justify-content:center">醫務管理學會</div>
+        <p style="font-size:13px;color:var(--color-text-secondary)">書面截止</p>
+        <p style="font-size:16px;font-weight:600;color:var(--theme-this);margin:6px 0">6月12日</p>
+        <p style="font-size:12px;color:var(--color-text-tertiary)">頒獎：決賽後二週</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title">書面資料通用準備重點</div>
+  <div class="card">
+    <div class="detail-box" style="margin-top:0">
+      <ul>
+        <li>本文25頁 + 附件25頁（以NHQA為主要規格）</li>
+        <li>邏輯前後連貫、圖表清晰、文字流暢</li>
+        <li>目標值設定須有文獻或外部標竿依據</li>
+        <li>改善前後數據具連續性，有原始查檢表/紀錄佐證</li>
+        <li>對策措施需與問題分析結構具連貫性與邏輯性</li>
+        <li>效果維持及標準化程序需呈現</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="panel" id="panel-nhqa">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:1.5rem">
+    <div class="badge badge-theme">國家醫療品質獎（NHQA）</div>
+    <span style="font-size:13px;color:var(--color-text-secondary)">主辦：財團法人醫院評鑑暨醫療品質策進會</span>
+  </div>
+
+  <div class="card" style="margin-bottom: 1.5rem; padding: 1rem 1.25rem;">
+    <p style="font-size:14px;font-weight:600;color:var(--current-theme);margin-bottom:12px"><i class="ti ti-calendar-event" style="margin-right:6px;vertical-align:-2px"></i>2026 競賽重要時程</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(130px, 1fr));gap:16px">
+      <div style="border-left: 3px solid var(--current-theme); padding-left: 10px;">
+        <div style="font-size:12px;font-weight:600;color:var(--color-text-secondary);margin-bottom:2px">即日起 - 5/15</div>
+        <div style="font-size:14px;font-weight:600;color:var(--color-text-primary)">線上報名與書面繳交</div>
+      </div>
+      <div style="border-left: 3px solid var(--current-light); padding-left: 10px;">
+        <div style="font-size:12px;font-weight:600;color:var(--color-text-secondary);margin-bottom:2px">6月 - 7月</div>
+        <div style="font-size:14px;font-weight:600;color:var(--color-text-primary)">書面評審與面談</div>
+      </div>
+      <div style="border-left: 3px solid var(--current-light); padding-left: 10px;">
+        <div style="font-size:12px;font-weight:600;color:var(--color-text-secondary);margin-bottom:2px">8月 - 10月</div>
+        <div style="font-size:14px;font-weight:600;color:var(--color-text-primary)">實地評審與現場發表</div>
+      </div>
+      <div style="border-left: 3px solid var(--current-light); padding-left: 10px;">
+        <div style="font-size:12px;font-weight:600;color:var(--color-text-secondary);margin-bottom:2px">11月</div>
+        <div style="font-size:14px;font-weight:600;color:var(--color-text-primary)">獲獎名單公告</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sub-tabs" id="nhqaSubTabs">
+    <button class="sub-btn active" onclick="switchSub('nhqa','written')">① 書面審查</button>
+    <button class="sub-btn" onclick="switchSub('nhqa','interview')">② 面談（改善組）</button>
+    <button class="sub-btn" onclick="switchSub('nhqa','onsite')">③ 實地審查（頂尖組）</button>
+    <button class="sub-btn" onclick="switchSub('nhqa','present')">④ 現場發表</button>
+    <button class="sub-btn" onclick="switchSub('nhqa','award')">獲獎比例</button>
+  </div>
+
+  <div class="sub-panel active" id="nhqa-written">
+    <div class="card">
+      <div style="font-size:14px;font-weight:500;color:var(--color-text-primary);margin-bottom:16px">書面資料：本文25頁 + 附件25頁</div>
+      <div id="nhqaScores">
+        <div class="score-row"><span class="score-label">問題結構與對策措施探討</span><div class="score-bar-wrap"><div class="score-bar" style="width:100%;"></div></div><span class="score-pct">25%</span></div>
+        <div class="score-row"><span class="score-label">對策行動過程</span><div class="score-bar-wrap"><div class="score-bar" style="width:100%;"></div></div><span class="score-pct">25%</span></div>
+        <div class="score-row"><span class="score-label">計畫</span><div class="score-bar-wrap"><div class="score-bar" style="width:80%;opacity:0.9"></div></div><span class="score-pct">20%</span></div>
+        <div class="score-row"><span class="score-label">成果表現</span><div class="score-bar-wrap"><div class="score-bar" style="width:60%;opacity:0.8"></div></div><span class="score-pct">15%</span></div>
+        <div class="score-row"><span class="score-label">資料呈現</span><div class="score-bar-wrap"><div class="score-bar" style="width:40%;opacity:0.7"></div></div><span class="score-pct">10%</span></div>
+        <div class="score-row"><span class="score-label">整體運作及檢討</span><div class="score-bar-wrap"><div class="score-bar" style="width:20%;opacity:0.6"></div></div><span class="score-pct">5%</span></div>
+      </div>
+    </div>
+    <div class="grid2">
+      <div class="card">
+        <p style="font-size:14px;font-weight:600;color:var(--color-text-primary);margin-bottom:8px">計畫（20%）重點</p>
+        <div class="detail-box" style="margin-top:0"><ul>
+          <li>主題選取配合機構/部門目標，選題範圍恰當</li>
+          <li>目標值設定依據文獻、標竿，全員討論決定</li>
+          <li>上期標準化確實落實，效果維持有呈現</li>
+          <li>專案是否有跨單位障礙並能解決</li>
+        </ul></div>
+      </div>
+      <div class="card">
+        <p style="font-size:14px;font-weight:600;color:var(--color-text-primary);margin-bottom:8px">問題結構與對策（25%）重點</p>
+        <div class="detail-box" style="margin-top:0"><ul>
+          <li>充分掌握問題相關影響因子，正確把握主要因子</li>
+          <li>文獻對主題的貢獻度、相關性、合適性</li>
+          <li>問題分析與對策方案前後連貫、邏輯性強</li>
+          <li>計畫進度表明確，考量時程與資源安排</li>
+        </ul></div>
+      </div>
+      <div class="card">
+        <p style="font-size:14px;font-weight:600;color:var(--color-text-primary);margin-bottom:8px">對策行動過程（25%）重點</p>
+        <div class="detail-box" style="margin-top:0"><ul>
+          <li>對策（最適策）具體可行、有效性及創意性</li>
+          <li>對策與解決問題的關聯性與邏輯性</li>
+          <li>努力過程有呈現，符合專業水平</li>
+        </ul></div>
+      </div>
+      <div class="card">
+        <p style="font-size:14px;font-weight:600;color:var(--color-text-primary);margin-bottom:8px">成果表現（15%）重點</p>
+        <div class="detail-box" style="margin-top:0"><ul>
+          <li>目標達成程度與進步情形清楚呈現</li>
+          <li>呼應選題理由（以病人角度）</li>
+          <li>無形效益評價依據及確認</li>
+          <li>制度與標準改變情形及新版標準落實</li>
+        </ul></div>
+      </div>
+    </div>
+    <div class="card">
+      <p style="font-size:14px;font-weight:600;color:var(--color-text-primary);margin-bottom:8px">資料呈現（10%）重點</p>
+      <div class="detail-box" style="margin-top:0"><ul style="display:grid;grid-template-columns:1fr 1fr;gap:4px">
+        <li>整體周延性：完整表達改善過程</li>
+        <li>文字流暢易於閱讀</li>
+        <li>內容邏輯性：簡明扼要</li>
+        <li>圖表清晰簡明</li>
+        <li>摘要書寫品質良好</li>
+      </ul></div>
+    </div>
+  </div>
+
+  <div class="sub-panel" id="nhqa-interview">
+    <div class="card">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+        <span class="badge badge-theme">第二階段 · 主題改善組</span>
+        <span style="font-size:14px;color:var(--color-text-secondary)">共45分鐘：簡報5分 + 面談35分 + 補充5分</span>
+      </div>
+      <div class="score-row"><span class="score-label">確實性</span><div class="score-bar-wrap"><div class="score-bar" style="width:100%;"></div></div><span class="score-pct">45%</span></div>
+      <div class="score-row"><span class="score-label">整體運作</span><div class="score-bar-wrap"><div class="score-bar" style="width:67%;opacity:0.9"></div></div><span class="score-pct">30%</span></div>
+      <div class="score-row"><span class="score-label">成果表現</span><div class="score-bar-wrap"><div class="score-bar" style="width:44%;opacity:0.8"></div></div><span class="score-pct">20%</span></div>
+      <div class="score-row"><span class="score-label">檢討</span><div class="score-bar-wrap"><div class="score-bar" style="width:11%;opacity:0.7"></div></div><span class="score-pct">5%</span></div>
+    </div>
+    <div class="grid2">
+      <div class="card">
+        <p style="font-size:14px;font-weight:600;color:var(--color-text-primary);margin-bottom:8px">確實性（45%）重點</p>
+        <div class="detail-box" style="margin-top:0"><ul>
+          <li>書面資料與答詢內容一致性</li>
+          <li>充分收集數據，有原始紀錄/查檢表</li>
+          <li>成員對品管手法與團隊運作徹底了解</li>
+          <li>各對策落實情形，成員對執行過程了解</li>
+        </ul></div>
+      </div>
+      <div class="card">
+        <p style="font-size:14px;font-weight:600;color:var(--color-text-primary);margin-bottom:8px">整體運作（30%）重點</p>
+        <div class="detail-box" style="margin-top:0"><ul>
+          <li>運作過程、手法適當性</li>
+          <li>組織目標與團隊目標具關聯性</li>
+          <li>創造力：腦力激盪或突破性想法</li>
+          <li>觀摩交流活動參與情形</li>
+          <li>成員學習成長與品管繼續教育</li>
+        </ul></div>
+      </div>
+    </div>
+    <div class="tip"><p>面談重點：5分鐘簡報需簡明扼要強調對策特色與改善成效，委員已閱讀書面資料。圈員需了解每一冊內容，不宜集中一人回答，回答時同時翻出佐證資料。</p></div>
+  </div>
+
+  <div class="sub-panel" id="nhqa-onsite">
+    <div class="card">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+        <span class="badge badge-theme">第二階段 · 主題改善頂尖組</span>
+        <span style="font-size:14px;color:var(--color-text-secondary)">共120分鐘：簡報5分 + 實審80分 + 其他35分</span>
+      </div>
+      <div class="score-row"><span class="score-label">確實性</span><div class="score-bar-wrap"><div class="score-bar" style="width:100%;"></div></div><span class="score-pct">40%</span></div>
+      <div class="score-row"><span class="score-label">制度化及延續性</span><div class="score-bar-wrap"><div class="score-bar" style="width:75%;opacity:0.9"></div></div><span class="score-pct">30%</span></div>
+      <div class="score-row"><span class="score-label">整體運作</span><div class="score-bar-wrap"><div class="score-bar" style="width:75%;opacity:0.9"></div></div><span class="score-pct">30%</span></div>
+    </div>
+    <div class="grid2">
+      <div class="card">
+        <p style="font-size:14px;font-weight:600;color:var(--color-text-primary);margin-bottom:8px">制度化及延續性（30%）重點</p>
+        <div class="detail-box" style="margin-top:0"><ul>
+          <li>文件標準化，有專責單位管理</li>
+          <li>訪談第一線人員執行情形</li>
+          <li>建立持續性管理/追蹤機制</li>
+          <li>知識管理內化擴散與傳承</li>
+          <li>主題改善外推程度（內外分享）</li>
+        </ul></div>
+      </div>
+      <div class="card">
+        <p style="font-size:14px;font-weight:600;color:var(--color-text-primary);margin-bottom:8px">整體運作（30%）重點</p>
+        <div class="detail-box" style="margin-top:0"><ul>
+          <li>機構及主管對團隊的支持與參與</li>
+          <li>改善對病人端（顧客端）效益</li>
+          <li>機構文化是否已有改變</li>
+          <li>成員學習成長影響</li>
+          <li>殘留問題及效果維持</li>
+        </ul></div>
+      </div>
+    </div>
+    <div class="tip"><p>實審重點：提前規劃委員訪視動線，準備書面資料冊供查閱，安排現場模擬/實作對策執行過程，並找好第一線的暗樁應答委員個別詢問。</p></div>
+  </div>
+
+  <div class="sub-panel" id="nhqa-present">
+    <div class="card">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+        <span class="badge badge-theme">第三階段 · 現場發表</span>
+        <span style="font-size:14px;color:var(--color-text-secondary)">簡報15分鐘 + 現場交流（共同時段）</span>
+      </div>
+      <div class="score-row"><span class="score-label">對策行動過程</span><div class="score-bar-wrap"><div class="score-bar" style="width:100%;"></div></div><span class="score-pct">25%</span></div>
+      <div class="score-row"><span class="score-label">問題結構與對策措施探討</span><div class="score-bar-wrap"><div class="score-bar" style="width:80%;opacity:0.9"></div></div><span class="score-pct">20%</span></div>
+      <div class="score-row"><span class="score-label">成果表現</span><div class="score-bar-wrap"><div class="score-bar" style="width:80%;opacity:0.9"></div></div><span class="score-pct">20%</span></div>
+      <div class="score-row"><span class="score-label">計畫</span><div class="score-bar-wrap"><div class="score-bar" style="width:40%;opacity:0.8"></div></div><span class="score-pct">10%</span></div>
+      <div class="score-row"><span class="score-label">現場表現（發表過程）</span><div class="score-bar-wrap"><div class="score-bar" style="width:40%;opacity:0.8"></div></div><span class="score-pct">10%</span></div>
+      <div class="score-row"><span class="score-label">整體運作</span><div class="score-bar-wrap"><div class="score-bar" style="width:40%;opacity:0.7"></div></div><span class="score-pct">10%</span></div>
+      <div class="score-row"><span class="score-label">檢討</span><div class="score-bar-wrap"><div class="score-bar" style="width:20%;opacity:0.6"></div></div><span class="score-pct">5%</span></div>
+    </div>
+    <div class="card">
+      <p style="font-size:14px;font-weight:600;color:var(--color-text-primary);margin-bottom:8px">現場表現（10%）評分要項</p>
+      <div class="detail-box" style="margin-top:0"><ul>
+        <li>報告內容系統分明、前後連貫</li>
+        <li>圖表文字清晰簡明</li>
+        <li>活動說明易於瞭解</li>
+        <li>發表人儀態端莊、口語表達合乎邏輯、口齒清晰</li>
+      </ul></div>
+    </div>
+  </div>
+
+  <div class="sub-panel" id="nhqa-award">
+    <div class="card">
+      <p style="font-size:15px;font-weight:600;color:var(--color-text-primary);margin-bottom:12px">主題改善組獲獎比例</p>
+      <div class="award-row"><span class="award-name">🥇 金銀銅獎（前三名）</span><span class="award-amount">約10%</span></div>
+      <div class="award-row"><span class="award-name">佳作</span><span class="award-amount">約35%</span></div>
+      <div class="award-row"><span class="award-name">潛力獎</span><span class="award-amount">約5%</span></div>
+      <div class="award-row"><span class="award-name">未得獎</span><span style="font-size:14px;color:var(--color-text-secondary)">約50%</span></div>
+    </div>
+    <div class="card">
+      <p style="font-size:15px;font-weight:600;color:var(--color-text-primary);margin-bottom:12px">主題改善頂尖組獲獎比例</p>
+      <div class="award-row"><span class="award-name">🥇 頂尖獎、標竿獎</span><span class="award-amount">不設獲獎比例，達標即予表揚</span></div>
+    </div>
+    <div class="card">
+      <p style="font-size:15px;font-weight:600;color:var(--color-text-primary);margin-bottom:12px">特別獎說明</p>
+      <div class="detail-box" style="margin-top:0"><ul>
+        <li>創意獎、幸福職場獎：於面談/實地審查時評分，平均達4分以上</li>
+        <li>人因特別獎：申請單檢附於成果報告書中，結合Human Factors理念</li>
+        <li>ESG特別獎：申請單檢附於成果報告書中，呼應永續環保責任</li>
+      </ul></div>
+    </div>
+  </div>
+</div>
+
+<div class="panel" id="panel-tcia">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:1.5rem">
+    <div class="badge badge-theme">台灣持續改善競賽（TCIA）金塔獎</div>
+    <span style="font-size:13px;color:var(--color-text-secondary)">主辦：財團法人中衛發展中心</span>
+  </div>
+
+  <div class="card" style="margin-bottom: 1.5rem; padding: 1rem 1.25rem;">
+    <p style="font-size:14px;font-weight:600;color:var(--current-theme);margin-bottom:12px"><i class="ti ti-calendar-event" style="margin-right:6px;vertical-align:-2px"></i>2026 競賽重要時程</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(130px, 1fr));gap:16px">
+      <div style="border-left: 3px solid var(--current-theme); padding-left: 10px;">
+        <div style="font-size:12px;font-weight:600;color:var(--color-text-secondary);margin-bottom:2px">4/30前</div>
+        <div style="font-size:14px;font-weight:600;color:var(--color-text-primary)">Email 參賽登錄</div>
+      </div>
+      <div style="border-left: 3px solid var(--current-theme); padding-left: 10px;">
+        <div style="font-size:12px;font-weight:600;color:var(--color-text-secondary);margin-bottom:2px">5/16前</div>
+        <div style="font-size:14px;font-weight:600;color:var(--color-text-primary)">報名文件與書面繳交</div>
+      </div>
+      <div style="border-left: 3px solid var(--current-light); padding-left: 10px;">
+        <div style="font-size:12px;font-weight:600;color:var(--color-text-secondary);margin-bottom:2px">6月</div>
+        <div style="font-size:14px;font-weight:600;color:var(--color-text-primary)">區會選拔(書面+發表)</div>
+      </div>
+      <div style="border-left: 3px solid var(--current-light); padding-left: 10px;">
+        <div style="font-size:12px;font-weight:600;color:var(--color-text-secondary);margin-bottom:2px">7月 - 10月</div>
+        <div style="font-size:14px;font-weight:600;color:var(--color-text-primary)">晉級公告與現場審查</div>
+      </div>
+      <div style="border-left: 3px solid var(--current-light); padding-left: 10px;">
+        <div style="font-size:12px;font-weight:600;color:var(--color-text-secondary);margin-bottom:2px">11月</div>
+        <div style="font-size:14px;font-weight:600;color:var(--color-text-primary)">決賽發表暨頒獎典禮</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sub-tabs" id="tciaSubTabs">
+    <button class="sub-btn active" onclick="switchSub('tcia','written')">① 區會選拔（書面+南區發表）</button>
+    <button class="sub-btn" onclick="switchSub('tcia','onsite')">② 實地審查</button>
+    <button class="sub-btn" onclick="switchSub('tcia','final')">③ 決賽發表</button>
+    <button class="sub-btn" onclick="switchSub('tcia','award')">獲獎比例</button>
+  </div>
+
+  <div class="sub-panel active" id="tcia-written">
+    <div class="card">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+        <span class="badge badge-theme">第一階段</span>
+        <span style="font-size:14px;color:var(--color-text-secondary)">書面審查 + 南區發表簡報（16分鐘）</span>
+      </div>
+      <div class="score-row"><span class="score-label">過程</span><div class="score-bar-wrap"><div class="score-bar" style="width:100%;"></div></div><span class="score-pct">25%</span></div>
+      <div class="score-row"><span class="score-label">發表</span><div class="score-bar-wrap"><div class="score-bar" style="width:80%;opacity:0.9"></div></div><span class="score-pct">20%</span></div>
+      <div class="score-row"><span class="score-label">效果</span><div class="score-bar-wrap"><div class="score-bar" style="width:72%;opacity:0.8"></div></div><span class="score-pct">18%</span></div>
+      <div class="score-row"><span class="score-label">計畫</span><div class="score-bar-wrap"><div class="score-bar" style="width:60%;opacity:0.7"></div></div><span class="score-pct">15%</span></div>
+      <div class="score-row"><span class="score-label">整體運作</span><div class="score-bar-wrap"><div class="score-bar" style="width:48%;opacity:0.6"></div></div><span class="score-pct">12%</span></div>
+      <div class="score-row"><span class="score-label">檢討</span><div class="score-bar-wrap"><div class="score-bar" style="width:40%;opacity:0.5"></div></div><span class="score-pct">10%</span></div>
+    </div>
+    <div class="grid2">
+      <div class="card">
+        <p style="font-size:14px;font-weight:600;color:var(--color-text-primary);margin-bottom:8px">過程（25%）書面評分重點</p>
+        <div class="detail-box" style="margin-top:0"><ul>
+          <li>問題分析或課題探討之深入程度</li>
+          <li>適當地運用手法</li>
+          <li>改善對策之努力程度</li>
+          <li>充分蒐集並運用資料數據</li>
+          <li>創意的發揮程度</li>
+        </ul></div>
+      </div>
+      <div class="card">
+        <p style="font-size:14px;font-weight:600;color:var(--color-text-primary);margin-bottom:8px">發表（20%）評分重點</p>
+        <div class="detail-box" style="margin-top:0"><ul>
+          <li>報告內容系統分明、前後連貫</li>
+          <li>圖表文字清晰、簡明與平實</li>
+          <li>活動說明易於瞭解</li>
+          <li>發表人之態度</li>
+        </ul></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sub-panel" id="tcia-onsite">
+    <div class="card">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+        <span class="badge badge-theme">第二階段 · 實地審查</span>
+        <span style="font-size:14px;color:var(--color-text-secondary)">共130分鐘：簡報20分 + 現場查核75分 + 其他35分</span>
+      </div>
+      <div class="score-row"><span class="score-label">活動過程確實性</span><div class="score-bar-wrap"><div class="score-bar" style="width:100%;"></div></div><span class="score-pct">20%</span></div>
+      <div class="score-row"><span class="score-label">改善對策努力度</span><div class="score-bar-wrap"><div class="score-bar" style="width:100%;"></div></div><span class="score-pct">20%</span></div>
+      <div class="score-row"><span class="score-label">整體運作</span><div class="score-bar-wrap"><div class="score-bar" style="width:90%;opacity:0.9"></div></div><span class="score-pct">18%</span></div>
+      <div class="score-row"><span class="score-label">分析方法適當性</span><div class="score-bar-wrap"><div class="score-bar" style="width:75%;opacity:0.8"></div></div><span class="score-pct">15%</span></div>
+      <div class="score-row"><span class="score-label">標準化落實度</span><div class="score-bar-wrap"><div class="score-bar" style="width:75%;opacity:0.8"></div></div><span class="score-pct">15%</span></div>
+      <div class="score-row"><span class="score-label">活動貢獻度</span><div class="score-bar-wrap"><div class="score-bar" style="width:60%;opacity:0.7"></div></div><span class="score-pct">12%</span></div>
+    </div>
+    <div class="card">
+      <p style="font-size:15px;font-weight:600;color:var(--color-text-primary);margin-bottom:12px">實審程序表</p>
+      <div class="timeline">
+        <div class="tl-item"><div class="tl-dot"></div><div class="tl-time">5分鐘</div><div class="tl-content">人員介紹、機構簡介與持續改善說明</div></div>
+        <div class="tl-item"><div class="tl-dot"></div><div class="tl-time">20分鐘</div><div class="tl-content">圈成立說明 + 本期改善過程與結果 + 餘留問題說明</div></div>
+        <div class="tl-item"><div class="tl-dot"></div><div class="tl-time">55分鐘</div><div class="tl-content">圈活動現場實地審查</div></div>
+        <div class="tl-item"><div class="tl-dot"></div><div class="tl-time">20分鐘</div><div class="tl-content">資料查核 + 與活動相關人員對談</div></div>
+        <div class="tl-item"><div class="tl-dot"></div><div class="tl-time">10分鐘</div><div class="tl-content">評審委員會商</div></div>
+        <div class="tl-item"><div class="tl-dot"></div><div class="tl-time">20分鐘</div><div class="tl-content">意見交流及座談</div></div>
+      </div>
+    </div>
+    <div class="tip"><p>實審重點：提前規劃委員訪視動線，準備書面資料冊分類清楚，設目錄頁及小標籤方便查閱，安排委員可看到標準化落實的第一線場景。</p></div>
+  </div>
+
+  <div class="sub-panel" id="tcia-final">
+    <div class="card">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+        <span class="badge badge-theme">第三階段 · 決賽發表</span>
+        <span style="font-size:14px;color:var(--color-text-secondary)">簡報16分鐘 + 現場交流4分鐘</span>
+      </div>
+      <p style="font-size:14px;color:var(--color-text-secondary);margin-bottom:12px; line-height:1.5;">評分項目與區會選拔相同（計畫15% / 過程25% / 效果18% / 檢討10% / 整體運作12% / 發表20%）</p>
+      <div class="tip"><p>決賽發表注重：報告前後連貫、圖表簡明平實、活動說明易懂、發表人態度沉穩。時間控制在16分鐘內。</p></div>
+    </div>
+  </div>
+
+  <div class="sub-panel" id="tcia-award">
+    <div class="card">
+      <div class="award-row"><span class="award-name">🥇 金塔獎</span><span class="award-amount">約10%</span></div>
+      <div class="award-row"><span class="award-name">🥈 銀塔獎</span><span class="award-amount">約20%</span></div>
+      <div class="award-row"><span class="award-name">🥉 銅塔獎</span><span class="award-amount">約25%</span></div>
+      <div class="award-row"><span class="award-name">區會長獎（含金銀銅）</span><span class="award-amount">約80%</span></div>
+      <div class="award-row"><span class="award-name">未得獎</span><span style="font-size:14px;color:var(--color-text-secondary)">約45%</span></div>
+    </div>
+    <div class="card">
+      <p style="font-size:14px;color:var(--color-text-secondary)">組別：自強組（9分）、團結組、至善組、特別組</p>
+    </div>
+  </div>
+</div>
+
+<div class="panel" id="panel-thqa">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:1.5rem">
+    <div class="badge badge-theme">品質改善成果發表競賽</div>
+    <span style="font-size:13px;color:var(--color-text-secondary)">主辦：臺灣醫療品質協會</span>
+  </div>
+
+  <div class="card" style="margin-bottom: 1.5rem; padding: 1rem 1.25rem;">
+    <p style="font-size:14px;font-weight:600;color:var(--current-theme);margin-bottom:12px"><i class="ti ti-calendar-event" style="margin-right:6px;vertical-align:-2px"></i>2026 競賽重要時程</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(130px, 1fr));gap:16px">
+      <div style="border-left: 3px solid var(--current-theme); padding-left: 10px;">
+        <div style="font-size:12px;font-weight:600;color:var(--color-text-secondary);margin-bottom:2px">9月底前</div>
+        <div style="font-size:14px;font-weight:600;color:var(--color-text-primary)">書面資料繳交</div>
+      </div>
+      <div style="border-left: 3px solid var(--current-light); padding-left: 10px;">
+        <div style="font-size:12px;font-weight:600;color:var(--color-text-secondary);margin-bottom:2px">第四季 (待公告)</div>
+        <div style="font-size:14px;font-weight:600;color:var(--color-text-primary)">審查與現場發表</div>
+      </div>
+      <div style="border-left: 3px solid var(--current-light); padding-left: 10px;">
+        <div style="font-size:12px;font-weight:600;color:var(--color-text-secondary);margin-bottom:2px">12月</div>
+        <div style="font-size:14px;font-weight:600;color:var(--color-text-primary)">頒獎典禮</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sub-tabs" id="thqaSubTabs">
+    <button class="sub-btn active" onclick="switchSub('thqa','written')">書面審查</button>
+    <button class="sub-btn" onclick="switchSub('thqa','present')">現場發表</button>
+  </div>
+
+  <div class="sub-panel active" id="thqa-written">
+    <div class="card">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+        <span class="badge badge-theme">書面審查評分</span>
+        <span style="font-size:14px;color:var(--color-text-secondary)">初階組 / 進階組</span>
+      </div>
+      <div class="score-row"><span class="score-label">整體表現</span><div class="score-bar-wrap"><div class="score-bar" style="width:100%;"></div></div><span class="score-pct">30%</span></div>
+      <div class="score-row"><span class="score-label">品質改善過程</span><div class="score-bar-wrap"><div class="score-bar" style="width:67%;opacity:0.9"></div></div><span class="score-pct">20%</span></div>
+      <div class="score-row"><span class="score-label">書面撰寫品質</span><div class="score-bar-wrap"><div class="score-bar" style="width:67%;opacity:0.9"></div></div><span class="score-pct">20%</span></div>
+      <div class="score-row"><span class="score-label">主題選定</span><div class="score-bar-wrap"><div class="score-bar" style="width:50%;opacity:0.8"></div></div><span class="score-pct">15%</span></div>
+      <div class="score-row"><span class="score-label">資料解析</span><div class="score-bar-wrap"><div class="score-bar" style="width:50%;opacity:0.8"></div></div><span class="score-pct">15%</span></div>
+    </div>
+    <div class="grid2">
+      <div class="card">
+        <p style="font-size:14px;font-weight:600;color:var(--color-text-primary);margin-bottom:8px">整體表現（30%）重點</p>
+        <div class="detail-box" style="margin-top:0"><ul>
+          <li>團隊積極投入程度</li>
+          <li>改善活動特色及創意</li>
+          <li>高層主管的支持程度</li>
+        </ul></div>
+      </div>
+      <div class="card">
+        <p style="font-size:14px;font-weight:600;color:var(--color-text-primary);margin-bottom:8px">書面撰寫品質（20%）重點</p>
+        <div class="detail-box" style="margin-top:0"><ul>
+          <li>報告內容前後連貫、具邏輯性</li>
+          <li>活動說明易於瞭解</li>
+          <li>圖表及文字清楚明瞭</li>
+        </ul></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sub-panel" id="thqa-present">
+    <div class="card">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+        <span class="badge badge-theme">口頭及海報發表評分</span>
+      </div>
+      <div class="score-row"><span class="score-label">現場發表</span><div class="score-bar-wrap"><div class="score-bar" style="width:100%;"></div></div><span class="score-pct">30%</span></div>
+      <div class="score-row"><span class="score-label">整體表現</span><div class="score-bar-wrap"><div class="score-bar" style="width:67%;opacity:0.9"></div></div><span class="score-pct">20%</span></div>
+      <div class="score-row"><span class="score-label">品質改善過程</span><div class="score-bar-wrap"><div class="score-bar" style="width:67%;opacity:0.9"></div></div><span class="score-pct">20%</span></div>
+      <div class="score-row"><span class="score-label">主題選定</span><div class="score-bar-wrap"><div class="score-bar" style="width:50%;opacity:0.8"></div></div><span class="score-pct">15%</span></div>
+      <div class="score-row"><span class="score-label">資料解析</span><div class="score-bar-wrap"><div class="score-bar" style="width:50%;opacity:0.8"></div></div><span class="score-pct">15%</span></div>
+    </div>
+    <div class="card">
+      <p style="font-size:14px;font-weight:600;color:var(--color-text-primary);margin-bottom:8px">現場發表（30%）重點</p>
+      <div class="detail-box" style="margin-top:0"><ul>
+        <li>報告內容前後連貫、清楚</li>
+        <li>活動說明易於瞭解</li>
+        <li>團隊合作精神</li>
+        <li>發表人之表現</li>
+      </ul></div>
+    </div>
+  </div>
+</div>
+
+<div class="panel" id="panel-this">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:1.5rem">
+    <div class="badge badge-theme">台灣健康照護品質管理競賽</div>
+    <span style="font-size:13px;color:var(--color-text-secondary)">主辦：社團法人台灣醫務管理學會</span>
+  </div>
+
+  <div class="card" style="margin-bottom: 1.5rem; padding: 1rem 1.25rem;">
+    <p style="font-size:14px;font-weight:600;color:var(--current-theme);margin-bottom:12px"><i class="ti ti-calendar-event" style="margin-right:6px;vertical-align:-2px"></i>2026 競賽重要時程</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(130px, 1fr));gap:16px">
+      <div style="border-left: 3px solid var(--current-theme); padding-left: 10px;">
+        <div style="font-size:12px;font-weight:600;color:var(--color-text-secondary);margin-bottom:2px">6/12前</div>
+        <div style="font-size:14px;font-weight:600;color:var(--color-text-primary)">第一階段報名與收件</div>
+      </div>
+      <div style="border-left: 3px solid var(--current-light); padding-left: 10px;">
+        <div style="font-size:12px;font-weight:600;color:var(--color-text-secondary);margin-bottom:2px">7/17</div>
+        <div style="font-size:14px;font-weight:600;color:var(--color-text-primary)">書面審查結果公告</div>
+      </div>
+      <div style="border-left: 3px solid var(--current-light); padding-left: 10px;">
+        <div style="font-size:12px;font-weight:600;color:var(--color-text-secondary);margin-bottom:2px">8/14前</div>
+        <div style="font-size:14px;font-weight:600;color:var(--color-text-primary)">第二階段報名與收件</div>
+      </div>
+      <div style="border-left: 3px solid var(--current-light); padding-left: 10px;">
+        <div style="font-size:12px;font-weight:600;color:var(--color-text-secondary);margin-bottom:2px">9月下旬</div>
+        <div style="font-size:14px;font-weight:600;color:var(--color-text-primary)">決賽口頭發表</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sub-tabs" id="thisSubTabs">
+    <button class="sub-btn active" onclick="switchSub('this','written')">品質改善組 · 書面審查</button>
+    <button class="sub-btn" onclick="switchSub('this','present')">品質改善組 · 現場發表</button>
+  </div>
+
+  <div class="sub-panel active" id="this-written">
+    <div class="card">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+        <span class="badge badge-theme">品質改善組 · 書面審查</span>
+      </div>
+      <div class="score-row"><span class="score-label">過程</span><div class="score-bar-wrap"><div class="score-bar" style="width:100%;"></div></div><span class="score-pct">35%</span></div>
+      <div class="score-row"><span class="score-label">計畫</span><div class="score-bar-wrap"><div class="score-bar" style="width:57%;opacity:0.9"></div></div><span class="score-pct">20%</span></div>
+      <div class="score-row"><span class="score-label">效果</span><div class="score-bar-wrap"><div class="score-bar" style="width:43%;opacity:0.8"></div></div><span class="score-pct">15%</span></div>
+      <div class="score-row"><span class="score-label">整體運作</span><div class="score-bar-wrap"><div class="score-bar" style="width:43%;opacity:0.8"></div></div><span class="score-pct">15%</span></div>
+      <div class="score-row"><span class="score-label">檢討與風險管理</span><div class="score-bar-wrap"><div class="score-bar" style="width:28%;opacity:0.7"></div></div><span class="score-pct">10%</span></div>
+      <div class="score-row"><span class="score-label">撰寫品質</span><div class="score-bar-wrap"><div class="score-bar" style="width:14%;opacity:0.6"></div></div><span class="score-pct">5%</span></div>
+    </div>
+    <div class="grid2">
+      <div class="card">
+        <p style="font-size:14px;font-weight:600;color:var(--color-text-primary);margin-bottom:8px">過程（35%）與計畫（20%）重點</p>
+        <div class="detail-box" style="margin-top:0"><ul>
+          <li>問題分析或課題探討深入程度</li>
+          <li>相關文獻探討與運用程度</li>
+          <li>適當地運用手法與充分數據收集</li>
+          <li>對策創意的發揮程度</li>
+          <li>主題選取重要性與目標設定適當性</li>
+        </ul></div>
+      </div>
+      <div class="card">
+        <p style="font-size:14px;font-weight:600;color:var(--color-text-primary);margin-bottom:8px">效果（15%）與檢討（10%）重點</p>
+        <div class="detail-box" style="margin-top:0"><ul>
+          <li>改善目標達成及進步程度</li>
+          <li>標準化與效果維持</li>
+          <li>風險辨識 (如流程失誤、系統限制)</li>
+          <li>偏差 / 失敗案例分析與修正再設計</li>
+        </ul></div>
+      </div>
+    </div>
+    <div class="tip"><p>內文25頁及附件25頁需符合頁數規定，內容切合活動主題及評分項目，圖表文字清晰。</p></div>
+  </div>
+
+  <div class="sub-panel" id="this-present">
+    <div class="card">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+        <span class="badge badge-theme">品質改善組 · 現場發表</span>
+      </div>
+      <div class="score-row"><span class="score-label">過程</span><div class="score-bar-wrap"><div class="score-bar" style="width:100%;"></div></div><span class="score-pct">30%</span></div>
+      <div class="score-row"><span class="score-label">計畫</span><div class="score-bar-wrap"><div class="score-bar" style="width:50%;opacity:0.9"></div></div><span class="score-pct">15%</span></div>
+      <div class="score-row"><span class="score-label">效果</span><div class="score-bar-wrap"><div class="score-bar" style="width:50%;opacity:0.9"></div></div><span class="score-pct">15%</span></div>
+      <div class="score-row"><span class="score-label">整體運作</span><div class="score-bar-wrap"><div class="score-bar" style="width:50%;opacity:0.9"></div></div><span class="score-pct">15%</span></div>
+      <div class="score-row"><span class="score-label">發表</span><div class="score-bar-wrap"><div class="score-bar" style="width:50%;opacity:0.9"></div></div><span class="score-pct">15%</span></div>
+      <div class="score-row"><span class="score-label">檢討與風險管理</span><div class="score-bar-wrap"><div class="score-bar" style="width:33%;opacity:0.8"></div></div><span class="score-pct">10%</span></div>
+    </div>
+    <div class="card">
+      <p style="font-size:14px;font-weight:600;color:var(--color-text-primary);margin-bottom:8px">發表（15%）重點</p>
+      <div class="detail-box" style="margin-top:0"><ul>
+        <li>報告內容系統性、邏輯分明前後連貫</li>
+        <li>現場簡報流暢具專業性、清晰、簡明</li>
+        <li>發表人／團隊之態度、台風及熟忱度</li>
+        <li>時間控制適切</li>
+      </ul></div>
+    </div>
+  </div>
+</div>
+
+<div class="panel" id="panel-reward">
+  <div class="section-title"><i class="ti ti-building-hospital" aria-hidden="true"></i>院內品質提升活動獎勵</div>
+  <div class="grid3" style="margin-bottom:1rem">
+    <div class="card">
+      <p style="font-size:13px;font-weight:600;color:var(--color-text-secondary);margin-bottom:12px">團隊運作獎勵</p>
+      <div class="award-row"><span style="font-size:14px;color:var(--color-text-primary)">準時繳交報告</span><span style="font-size:14px;font-weight:600;color:var(--theme-tcia)">50元/次</span></div>
+      <div class="award-row"><span style="font-size:14px;color:var(--color-text-primary)">團隊出席</span><span style="font-size:14px;font-weight:600;color:var(--theme-tcia)">50元/次</span></div>
+      <div class="award-row"><span style="font-size:14px;color:var(--color-text-primary)">QCC運作獎勵金</span><span style="font-size:14px;font-weight:600;color:var(--theme-tcia)">1萬元/組</span></div>
+      <div class="award-row"><span style="font-size:14px;color:var(--color-text-primary)">效果維持優良</span><span style="font-size:14px;font-weight:600;color:var(--theme-tcia)">2千元/組</span></div>
+    </div>
+    <div class="card">
+      <p style="font-size:13px;font-weight:600;color:var(--color-text-secondary);margin-bottom:12px">院內期末成果競賽</p>
+      <div class="award-row"><span style="font-size:14px;color:var(--color-text-primary)">🥇 金獎</span><span style="font-size:14px;font-weight:600;color:var(--theme-nhqa)">3萬元</span></div>
+      <div class="award-row"><span style="font-size:14px;color:var(--color-text-primary)">🥈 銀獎</span><span style="font-size:14px;font-weight:600;color:var(--theme-nhqa)">2萬元</span></div>
+      <div class="award-row"><span style="font-size:14px;color:var(--color-text-primary)">🥉 銅獎</span><span style="font-size:14px;font-weight:600;color:var(--theme-nhqa)">1萬元</span></div>
+      <div class="award-row"><span style="font-size:14px;color:var(--color-text-primary)">佳作獎</span><span style="font-size:14px;font-weight:600;color:var(--theme-nhqa)">5千元</span></div>
+    </div>
+    <div class="card">
+      <p style="font-size:13px;font-weight:600;color:var(--color-text-secondary);margin-bottom:12px">主治醫師科部外績效</p>
+      <div class="award-row"><span style="font-size:14px;color:var(--color-text-primary)">品管中心認可活動</span><span style="font-size:14px;font-weight:600;color:var(--theme-this)">10分</span></div>
+      <div class="award-row"><span style="font-size:14px;color:var(--color-text-primary)">獲院內獎項</span><span style="font-size:14px;font-weight:600;color:var(--theme-this)">20分</span></div>
+      <div class="award-row"><span style="font-size:14px;color:var(--color-text-primary)">獲院外獎項</span><span style="font-size:14px;font-weight:600;color:var(--theme-this)">30分</span></div>
+      <div class="award-row"><span style="font-size:14px;color:var(--color-text-primary)">獲金牌或等同獎項</span><span style="font-size:14px;font-weight:600;color:var(--theme-this)">40分</span></div>
+    </div>
+  </div>
+
+  <div class="section-title"><i class="ti ti-trophy" aria-hidden="true"></i>院外品質競賽獲獎獎勵金</div>
+  <div class="card">
+    <div style="overflow-x:auto">
+      <table style="width:100%;border-collapse:collapse;font-size:14px">
+        <thead>
+          <tr style="border-bottom:1px solid var(--color-border-secondary)">
+            <th style="text-align:left;padding:12px 8px;font-weight:600;color:var(--color-text-secondary)">競賽名稱</th>
+            <th style="text-align:center;padding:12px 8px;font-weight:600;color:#F4B400">金獎</th>
+            <th style="text-align:center;padding:12px 8px;font-weight:600;color:var(--color-text-secondary)">銀獎</th>
+            <th style="text-align:center;padding:12px 8px;font-weight:600;color:#D84315">銅獎</th>
+            <th style="text-align:center;padding:12px 8px;font-weight:600;color:var(--color-text-secondary)">優選</th>
+            <th style="text-align:center;padding:12px 8px;font-weight:600;color:var(--color-text-secondary)">佳作</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-bottom:1px dashed var(--color-border-tertiary)">
+            <td style="padding:12px 8px;color:var(--color-text-primary);font-weight:500;">院內品質提升競賽</td>
+            <td style="text-align:center;padding:12px 8px;font-weight:600;color:var(--color-text-primary)">3萬</td>
+            <td style="text-align:center;padding:12px 8px;color:var(--color-text-primary)">2萬</td>
+            <td style="text-align:center;padding:12px 8px;color:var(--color-text-primary)">1萬</td>
+            <td style="text-align:center;padding:12px 8px;color:var(--color-text-tertiary)">—</td>
+            <td style="text-align:center;padding:12px 8px;color:var(--color-text-primary)">0.5萬</td>
+          </tr>
+          <tr style="border-bottom:1px dashed var(--color-border-tertiary)">
+            <td style="padding:12px 8px;color:var(--theme-nhqa);font-weight:600;">醫策會 NHQA</td>
+            <td style="text-align:center;padding:12px 8px;font-weight:600;color:var(--theme-nhqa)">9萬</td>
+            <td style="text-align:center;padding:12px 8px;color:var(--color-text-primary)">6萬</td>
+            <td style="text-align:center;padding:12px 8px;color:var(--color-text-primary)">3萬</td>
+            <td style="text-align:center;padding:12px 8px;color:var(--color-text-primary)">2萬</td>
+            <td style="text-align:center;padding:12px 8px;color:var(--color-text-primary)">1.5萬</td>
+          </tr>
+          <tr style="border-bottom:1px dashed var(--color-border-tertiary)">
+            <td style="padding:12px 8px;color:var(--theme-tcia);font-weight:600;">中衛 TCIA</td>
+            <td style="text-align:center;padding:12px 8px;font-weight:600;color:var(--theme-tcia)">6萬</td>
+            <td style="text-align:center;padding:12px 8px;color:var(--color-text-primary)">4萬</td>
+            <td style="text-align:center;padding:12px 8px;color:var(--color-text-primary)">2萬</td>
+            <td style="text-align:center;padding:12px 8px;color:var(--color-text-tertiary)">—</td>
+            <td style="text-align:center;padding:12px 8px;color:var(--color-text-tertiary)">—</td>
+          </tr>
+          <tr style="border-bottom:1px dashed var(--color-border-tertiary)">
+            <td style="padding:12px 8px;color:var(--theme-thqa);font-weight:600;">臺灣醫療品質協會</td>
+            <td style="text-align:center;padding:12px 8px;font-weight:600;color:var(--theme-thqa)">3萬</td>
+            <td style="text-align:center;padding:12px 8px;color:var(--color-text-primary)">2萬</td>
+            <td style="text-align:center;padding:12px 8px;color:var(--color-text-primary)">1萬</td>
+            <td style="text-align:center;padding:12px 8px;color:var(--color-text-tertiary)">—</td>
+            <td style="text-align:center;padding:12px 8px;color:var(--color-text-tertiary)">—</td>
+          </tr>
+          <tr>
+            <td style="padding:12px 8px;color:var(--theme-this);font-weight:600;">台灣醫務管理學會</td>
+            <td style="text-align:center;padding:12px 8px;font-weight:600;color:var(--theme-this)">3萬</td>
+            <td style="text-align:center;padding:12px 8px;color:var(--color-text-primary)">2萬</td>
+            <td style="text-align:center;padding:12px 8px;color:var(--color-text-primary)">1萬</td>
+            <td style="text-align:center;padding:12px 8px;color:var(--color-text-tertiary)">—</td>
+            <td style="text-align:center;padding:12px 8px;color:var(--color-text-tertiary)">—</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="font-size:13px;color:var(--color-text-tertiary);margin-top:16px">※ 佳作以上團隊參加院外競賽後核發。得獎者另記功表揚。</p>
+  </div>
+</div>
+
+</div>
+
+<script>
+function switchTab(id){
+  document.querySelectorAll('.tab-btn').forEach((b)=>{
+    b.classList.remove('active');
+    if(b.getAttribute('onclick').includes(id)){
+      b.classList.add('active');
+    }
+  });
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('panel-'+id).classList.add('active');
+}
+function switchSub(prefix, id){
+  document.querySelectorAll('#'+prefix+'SubTabs .sub-btn').forEach(b=>{
+    b.classList.remove('active');
+  });
+  event.target.classList.add('active');
+  document.querySelectorAll('#panel-'+prefix+' .sub-panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById(prefix+'-'+id).classList.add('active');
+}
+</script>
